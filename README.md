@@ -29,7 +29,7 @@ Once the IDE is set up, you may start using the Exponea library in your code. Fi
 // Use custom Exponea instance
 [Exponea getInstance:@"projectToken" andWithTarget:@"http://url.to.your.instance.com"];
 ```
-To start tracking, the customer needs to be identified with their unique  `customerId`. The unique  `customerId` can either be an instance of NSString, or NSDictionary representing the  `customerIds` as referenced in [the API guide](http://guides.exponea.com/technical-guide/rest-client-api/#Detailed_key_descriptions). Setting
+To start tracking, the customer needs to be identified with their unique  `customerId`. The unique  `customerId` can either be an instance of NSString, or NSDictionary representing the  `customerIds` as referenced in [the API guide](http://guides.exponea.com/technical-guide/rest-client-api/). Setting
 
 ```
 NSString *customerId = @"123-foo-bar";
@@ -119,7 +119,7 @@ Both events contain the timestamp of the occurence together with basic attribute
 ## Installation ##
 
 
-Installation event is fired **only once** for the whole lifetime of the game on one device when the game is launched for the first time. Besides the basic information about the device (OS, OS version, SDK, SDK version and device model), it also contains additional attribute called **campaign_id** which identifies the source of the installation. For more information about this topic, please refer to the [aquisition documentation](http://guides.exponea.com/user-guide/acquisition/). Example of installation event:
+Installation event is fired **only once** for the whole lifetime of the game on one device when the game is launched for the first time. Besides the basic information about the device (OS, OS version, SDK, SDK version and device model), it also contains additional attribute called **campaign_id** which identifies the source of the installation. Example of installation event:
 
 
 ```
@@ -216,7 +216,11 @@ For push notifications to work, you need a push notifications certificate with a
 Now you are ready to implement Push Notifications into your iOS application.
 
 ## Exponea iOS SDK ##
-By default, receiving of push notifications is disabled. You can enable it by calling the  `registerPushNotifications` method. Please note that this method needs to be called only once. Push notifications remain enabled until they are unregistered. After registering for push notifications, iOS automatically calls  ```didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken ``` which is a good place to send the device token to the Exponea web application using method  ```addPushNotificationsToken ```. See code sample from **AppDelegate.m** below and [Apple Push Notifications Documentation](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html) for more details.
+By default, receiving of push notifications is disabled. You can enable it by calling the  `registerPushNotifications` method. Please note that this method needs to be called only once. Push notifications remain enabled until they are unregistered. After registering for push notifications, iOS automatically calls  
+```
+didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken 
+```
+which is a good place to send the device token to the Exponea web application using method  `addPushNotificationsToken`. See code sample from **AppDelegate.m** below and [Apple Push Notifications Documentation](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html) for more details.
 ```
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"token: %@", deviceToken);
@@ -230,7 +234,7 @@ By default, receiving of push notifications is disabled. You can enable it by c
 
 Flushing events
 ---------------
-All tracked events are stored in the internal SQL database. By default, Exponea iOS SDK automagically takes care of flushing events to the Exponea API. This feature can be turned off with method  ```disableAutomaticFlushing ``` which takes no arguments. Please be careful with turning automatic flushing off because if you turn it off, you need to manually call  `flush` to flush the tracked events manually everytime there is something to flush.
+All tracked events are stored in the internal SQL database. By default, Exponea iOS SDK automagically takes care of flushing events to the Exponea API. This feature can be turned off with method  `disableAutomaticFlushing` which takes no arguments. Please be careful with turning automatic flushing off because if you turn it off, you need to manually call  `flush` to flush the tracked events manually everytime there is something to flush.
 ```
 [Exponea enableAutomaticFlushing];
 
