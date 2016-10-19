@@ -1,0 +1,18 @@
+//
+//  Command.h
+//  ExponeaSDK
+//
+//  Created by Igi on 2/5/15.
+//  Copyright (c) 2016 Exponea. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface Command : NSObject
+
+- (instancetype)initWithEndpoint:(NSString *)endpoint;
+- (instancetype)initWithEndpoint:(NSString *)endpoint andTimestamp:(NSNumber *)timestamp;
+
+- (NSMutableDictionary *)getPayload;
+
+@end
