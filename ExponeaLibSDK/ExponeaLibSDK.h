@@ -14,6 +14,10 @@ FOUNDATION_EXPORT const unsigned char ExponeaSDKVersionString[];
 
 #import <StoreKit/StoreKit.h>
 
+@interface ExponeaLibSDK : NSObject
+
+@end
+
 @interface ExponeaSegment : NSObject
 
 - (instancetype)initWithName:(NSString *)name;
