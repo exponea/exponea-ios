@@ -13,39 +13,67 @@ Installation
 * Click on the **Plus sign** button (titled *Add items*)
 * In the newly opened dialog window, please select **ExponeaSDK.framework** under *< Your project >* > ExponeaSDK.xcodeproj > Products and click **Add**)
 
-
+* (Swift only) In your project create a new Objective-C file with File -> New and choose Objective-C.
+* (Swift only) Accept the prompt asking whether you want to create Bridging Header from Objective-C to Swift.
+* (Swift only) Delete the Objective-C created file but keep the .h bridging header file.
+* (Swift only) In the bridging header file write `#import <ExponeaSDK/Exponea.h>`
+* (Swift only) In AppDelegate file add an import statement `import ExponeaSDK`
+* (Swift only) More info about the bridging process can be found [here](https://stackoverflow.com/questions/24272184/connect-objective-c-framework-to-swift-ios-8-app-parse-framework/24272545#24272545)
 After completing the steps above, the Exponea iOS SDK should be included in your app, ready to be used.
 
 Usage
 -----
 ### Basic Interface ###
 
-Once the IDE is set up, you may start using the Exponea library in your code. Firstly, you need to import main header file **ExponeaSDK.h** with the following code:  ```#import <ExponeaSDK/ExponeaSDK.h> ```. Secondly, you need to know the URI of your Exponea API instance (usually  ```https://api.exponea.com ```)and your project  ```token ``` (located on the Project management / Overview page in the web application). To interact with the Exponea SDK, you need to obtain a shared instance of the Exponea class using the project  `token` (the URI parameter is optional):
+Once the IDE is set up, you may start using the Exponea library in your code. Firstly, you need to import main header file **ExponeaSDK.h** with the following code:  ```#import <ExponeaSDK/ExponeaSDK.h> ```. Secondly, you need to know the URI of your Exponea API instance (usually  ```https://api.exponea.com ```)and your project  ```token ``` (located on the Project management / Overview page in the web application). To interact with the Exponea SDK, you need to obtain a shared instance of the Exponea class using the project  `token` (the URI parameter is optional). You can do this initialization in AppDelegate file.
 
 ```
+// Objective-C
 // Use public Exponea instance
 [Exponea getInstance:@"projectToken"];
-
 // Use custom Exponea instance
 [Exponea getInstance:@"projectToken" andWithTarget:@"http://url.to.your.instance.com"];
 ```
+```
+// Swift
+// Use public Exponea instance
+Exponea.getInstance("projectToken")
+// Use custom Exponea instance
+Exponea.getInstance("projectToken", andWithTarget: "http://url.to.your.instance.com")
+```
+
 To start tracking, the customer needs to be identified with their unique  `customerId`. The unique  `customerId` can either be an instance of NSString, or NSDictionary representing the  `customerIds` as referenced in [the API guide](http://guides.exponea.com/technical-guide/rest-client-api/). Setting
 
 ```
+// Objective-C
 NSString *customerId = @"123-foo-bar";
-```
-is equivalent to
-```
+// or
 NSDictionary *customerId = @{@"registered": @"123-foo-bar"};
 ```
-In order to identify a customer, call one of the `identifyWithCustomer` or `identifyWithCustomerDict` methods on the obtained Exponea instance as follows:
 ```
+// Swift
+var customerId = "123-foo-bar"
+// or
+var customerId = ["registered": "123-foo-bar"]
+```
+
+In order to identify a customer, call one of the `identifyWithCustomer` or `identifyWithCustomerDict` methods on the obtained Exponea instance as follows:
+
+```
+// Objective-C
 // Identify a customer with their NSString customerId
 [Exponea identify:customerId];
-
 // Identify a customer with their NSDictionary customerId
 [Exponea identifyWithCustomerDict:customerId];
 ```
+```
+// Swift
+// Identify a customer with their String customerId
+Exponea.identify(customerId)
+// Identify a customer with their Dictionary customerId
+Exponea.identify(withCustomerDict: customerId)
+```
+
 The identification is performed asynchronously and there is no need to wait for it to finish. Until they are sent to the Exponea API, all tracked events are stored in the internal SQL database.
 
 You may track any event by calling the  `track` method on the Exponea instance. The  `track` method takes one mandatory and two optional arguments. The first argument is a  ```NSString *type ``` argument categorizing your event. This argument is **required**. You may choose any string you like.
@@ -53,6 +81,7 @@ You may track any event by calling the  `track` method on the Exponea instance.
 The next two arguments are  `NSDictionary *properties` and  `NSNumber *timestamp`. Properties is a dictionary which uses  `NSString` keys and the value may be any  ```NSObject ``` which is serializable to JSON. Properties can be used to attach any additional data to the event. Timestamp is a standard UNIX timestamp in seconds and it can be used to mark the time of the event's occurrence. The default timestamp is preset to the time when the event is tracked.
 
 ```
+// Objective-C
 NSDictionary *properties = @{@"item_id": @45};
 NSNumber *timestamp = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1970]];
 
@@ -68,13 +97,37 @@ NSNumber *timestamp = [NSNumber numberWithLong:[[NSDate date] timeIntervalSince1
 // Basic tracking that an item has been bought
 [Exponea track:@"item_bought"];
 ```
+```
+// Swift
+var properties = ["item_id": 45]
+var timestamp = Date().timeIntervalSince1970
+
+// Tracking of buying an item with item's properties at a specific time
+Exponea.track("item_bought", withProperties: properties, withTimestamp: timestamp as NSNumber)
+
+// Tracking of buying an item at a specific time
+Exponea.track("item_bought", withTimestamp: timestamp as NSNumber)
+
+// Tracking of buying an item with item's properties
+Exponea.track("item_bought", withProperties: properties)
+
+// Basic tracking that an item has been bought
+Exponea.track("item_bought")
+```
+
 The Exponea iOS SDK provides you with means to store arbitrary data that is not event-specific (e.g. customer age, gender, initial referrer). Such data is tied directly to the customer as their properties. To store such data, the  ```update ``` method is used.
 
 ```
+// Objective-C
 NSDictionary *properties = @{@"age": @34};
-
 // Store customer's age
 [Exponea update:properties];
+```
+```
+// Swift
+var properties = ["age": 34]
+// Store customer's age
+Exponea.update(properties)
 ```
 
 Automatic events
@@ -86,17 +139,26 @@ Exponea iOS SDK automatically tracks some events on its own. Automatic events en
 
 Session is a real time spent in the game, it starts when the game is launched and ends when the game goes to background. If the player returns to game in 60 seconds (To change TIMEOUT value, call  ```setSessionTimeOut```), game will continue in current session. Tracking of sessions produces two events,  ```session_start ``` and  ```session_end ```. To track session start call  ```trackSessionStart ``` from **applicationDidBecomeActive** method and to track session end call  `trackSessionEnd` from **applicationDidEnterBackground** in AppDelegate.m
 ```
-//AppDelegate.m
-
+// Objective-C
+// AppDelegate.m
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [Exponea trackSessionStart];
 }
-
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     [Exponea trackSessionEnd];
+}
+```
+```
+// Swift
+// AppDelegate.swift
+func applicationDidBecomeActive(_ application: UIApplication) {
+    Exponea.trackSessionStart()
+}
+func applicationDidEnterBackground(_ application: UIApplication) {
+    Exponea.trackSessionEnd()
 }
 ```
 
@@ -180,7 +242,12 @@ Exponea iOS SDK automatically tracks all payments made in the game as the SDK in
 If you use virtual payments (e.g. purchase with in-game gold, coins, ...) in your project, you can track them with a call to  `trackVirtualPayment`.
 
 ```
+// Objective-C
 [Exponea trackVirtualPayment:@"currency" withAmount:@3 withItemName:@"itemName" withItemType:@"itemType"];
+```
+```
+// Swift
+Exponea.trackVirtualPayment("currency", withAmount: 3, withItemName: "itemName", withItemType: "itemType")
 ```
 
 Segmentation
@@ -189,9 +256,16 @@ Segmentation
 If you want to get current segment of your player, just call  `getCurrentSegment`. You will need id of your segmentation and project secret token.
 
 ```
+// Objective-C
 [Exponea getCurrentSegment:@"segmentaionId" withProjectSecret:@"projectSecret" withCallBack:^(BOOL wasSuccessful, ExponeaSegment *segment, NSString *error) {
     NSString *name = [segment getName];
 }];
+```
+```
+// Swift
+Exponea.getCurrentSegment("segmentaionId", withProjectSecret: "projectSecret", withCallBack: {(_ wasSuccessful: Bool, _ segment: ExponeaSegment, _ error: String) -> Void in
+    var name: String = segment.getName()
+} as! onSegmentReceive)
 ```
 
 Push notifications
@@ -200,28 +274,39 @@ The Exponea web application allows you to easily create complex scenarios which 
 
 ## Apple Push certificate ##
 
-For push notifications to work, you need a push notifications certificate with a corresponding private key in a single file in PEM format. The following steps show you how to export one from the Keychain Access application on your Mac:
-
-* Launch Keychain Access application on your Mac
-* Find Apple Push certificate for your app in *Certificates* or *My certificates* section (it should start with **Apple Development IOS Push Services:** for development certificate or **Apple Production IOS Push Services:** for production certificate)
-* The certificate should contain a **private key**, select both certificate and its corresponding private key, then right click and click **Export 2 items**
-* In the saving modal window, choose a filename and saving location which you prefer and select the file format **Personal Information Exchange (.p12)** and then click **Save**
-* In the next modal window, you will be prompted to choose a password, leave the password field blank and click **OK**. Afterwards, you will be prompted with you login password, please enter it.
-* Convert p12 file format to PEM format using OpenSSL tools in terminal. Please launch **Terminal** and navigate to the folder, where the .p12 certificate is saved (e.g.  `~/Desktop/ `)
-* Run the following command  `openssl pkcs12 -in certificate.p12 -out certificate.pem -clcerts -nodes`, where **certificate.p12** is the exported certificate from Keychain Access and **certificate.pem** is the converted certificate in PEM format containing both Apple Push certificate and its private key
-* The last step is to upload the Apple Push certificate to the Exponea web application. In the Exponea web application, navigate to **Project management -> Settings -> Notifications**
-* Copy the content of **certificate.pem** into **Apple Push Notifications Certificate** and click **Save**
-
+Exponea uses the JWT authentication tokens with ES256 algorithm for sending push notifications. We will have to create a private key, which Exponea will use for signing your tokens and payloads.
+* Go to Apple developers site and create a new key https://developer.apple.com/account/ios/authkey/ for APN. Download it.
+* The private key file will be named AuthKey_XXXXX.p8, where XXXXX is the Key Id. You will also be able to see the Key Id on the Apple developer's site just before download.
+* Find your Team ID and bundle name on this site https://developer.apple.com/account/ios/identifier/bundle
+* The last step is to upload the Apple Push certificate to the Exponea web application. In the Exponea web application, navigate to **Project management -> Settings -> Push Notifications**
+* Copy and paste Key Id, Team Id, contents of private key file, bundle name into proper fields in Exponea and save the settings.
 
 Now you are ready to implement Push Notifications into your iOS application.
 
 ## Exponea iOS SDK ##
-By default, receiving of push notifications is disabled. You can enable it by calling the  `registerPushNotifications` method. Please note that this method needs to be called only once. Push notifications remain enabled until they are unregistered. After registering for push notifications, iOS automatically calls  
+By default, receiving of push notifications is disabled. You can enable it by calling the  `registerPushNotifications` method. In Swift, requesting user to allow push notifications may look like this:
+```
+// Swift
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+    Exponea.getInstance("projectToken")
+    let center = UNUserNotificationCenter.current()
+    center.requestAuthorization(options:[.badge, .alert, .sound]) { (granted, error) in
+        // Enable or disable features based on authorization.
+    }
+    application.registerForRemoteNotifications()
+    return true
+}
+```
+
+Please note that this method needs to be called only once. Push notifications remain enabled until they are unregistered. After registering for push notifications, iOS automatically calls 
+
 ```
 didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken 
 ```
+
 which is a good place to send the device token to the Exponea web application using method  `addPushNotificationsToken`. See code sample from **AppDelegate.m** below and [Apple Push Notifications Documentation](https://developer.apple.com/library/ios/documentation/NetworkingInternet/Conceptual/RemoteNotificationsPG/Introduction.html) for more details.
 ```
+// Objective-C
 - (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken {
     NSLog(@"token: %@", deviceToken);
     [Exponea addPushNotificationsToken:deviceToken];
@@ -231,6 +316,18 @@ which is a good place to send the device token to the Exponea web application us
     NSLog(@"failed obtaining token: %@", error);
 }
 ```
+```
+// Swift
+func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data){
+    print("token: \(deviceToken)")
+    Exponea.addPushNotificationsToken(deviceToken)
+}
+func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
+    print("Remote notification support is unavailable due to error: \(error.localizedDescription)")
+}
+```
+
+Now, you can easily send push notifications through Exponea.
 
 Flushing events
 ---------------
