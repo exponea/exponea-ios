@@ -13,11 +13,11 @@ Installation
 * Click on the **Plus sign** button (titled *Add items*)
 * In the newly opened dialog window, please select **ExponeaSDK.framework** under *< Your project >* > ExponeaSDK.xcodeproj > Products and click **Add**)
 
-* (Swift only) In your project create a new Objective-C file with File -> New and choose Objective-C.
+* (Swift only) In your project create a new Objective-C file with **File -> New** and choose Objective-C.
 * (Swift only) Accept the prompt asking whether you want to create Bridging Header from Objective-C to Swift.
-* (Swift only) Delete the Objective-C created file but keep the .h bridging header file.
+* (Swift only) Delete the newly created Objective-C file but keep the **.h bridging header file**.
 * (Swift only) In the bridging header file write `#import <ExponeaSDK/Exponea.h>`
-* (Swift only) In AppDelegate file add an import statement `import ExponeaSDK`
+* (Swift only) In **AppDelegate** file add an import statement `import ExponeaSDK`
 * (Swift only) More info about the bridging process can be found [here](https://stackoverflow.com/questions/24272184/connect-objective-c-framework-to-swift-ios-8-app-parse-framework/24272545#24272545)
 After completing the steps above, the Exponea iOS SDK should be included in your app, ready to be used.
 
@@ -276,10 +276,10 @@ The Exponea web application allows you to easily create complex scenarios which 
 
 Exponea uses the JWT authentication tokens with ES256 algorithm for sending push notifications. We will have to create a private key, which Exponea will use for signing your tokens and payloads.
 * Go to Apple developers site and create a new key https://developer.apple.com/account/ios/authkey/ for APN. Download it.
-* The private key file will be named AuthKey_XXXXX.p8, where XXXXX is the Key Id. You will also be able to see the Key Id on the Apple developer's site just before download.
-* Find your Team ID and bundle name on this site https://developer.apple.com/account/ios/identifier/bundle
-* The last step is to upload the Apple Push certificate to the Exponea web application. In the Exponea web application, navigate to **Project management -> Settings -> Push Notifications**
-* Copy and paste Key Id, Team Id, contents of private key file, bundle name into proper fields in Exponea and save the settings.
+* The **private key** file will be named AuthKey_XXXXX.p8, where XXXXX is the **Key Id**. You will also be able to see the Key Id on the Apple developer's site just before download.
+* Find your **Team Id** and **bundle name** on this site https://developer.apple.com/account/ios/identifier/bundle
+* The last step is to upload your Apple Push data to the Exponea web application. In the Exponea web application, navigate to **Project management -> Settings -> Push Notifications**
+* Copy and paste **Key Id**, **Team Id**, contents of **private key** file, **bundle name** into proper fields in Exponea and save the settings.
 
 Now you are ready to implement Push Notifications into your iOS application.
 
