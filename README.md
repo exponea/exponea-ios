@@ -268,11 +268,11 @@ Exponea.getCurrentSegment("segmentaionId", withProjectSecret: "projectSecret", w
 } as! onSegmentReceive)
 ```
 
-Push notifications
-------------------
+## Push notifications ##
+
 The Exponea web application allows you to easily create complex scenarios which you can use to send push notifications directly to your players. The following section explains how to enable receiving push notifications in the Exponea iOS SDK.
 
-## Apple Push certificate ##
+### Apple Push certificate ###
 
 Exponea uses the JWT authentication tokens with ES256 algorithm for sending push notifications. We will have to create a private key, which Exponea will use for signing your tokens and payloads.
 * Go to Apple developers site and create a new key https://developer.apple.com/account/ios/authkey/ for APN. Download it.
@@ -283,7 +283,7 @@ Exponea uses the JWT authentication tokens with ES256 algorithm for sending push
 
 Now you are ready to implement Push Notifications into your iOS application.
 
-## Exponea iOS SDK ##
+### Using Exponea iOS SDK ###
 By default, receiving of push notifications is disabled. You can enable it by calling the  `registerPushNotifications` method. In Swift, requesting user to allow push notifications may look like this:
 ```
 // Swift
@@ -338,3 +338,22 @@ All tracked events are stored in the internal SQL database. By default, Exponea 
 [Exponea disableAutomaticFlushing];
 [Exponea flush];
 ```
+
+## Hybrid apps ##
+If you are using WebView to embed a browser (with your website) into the iOS native app, do not forget to identify the customer. JS SDK on the website generates one cookie, independent of the iOS device cookie. You can extract the JS cookie from website using the following or similar snippet of Swift code:
+```swift
+// Swift
+let myURL = URL(string: "https://www.yourwebsite.com")
+let myRequest = URLRequest(url: myURL!)
+webView.load(myRequest)
+let storage = WKWebsiteDataStore.default()
+let cookie_store = storage.httpCookieStore
+cookie_store.getAllCookies({(cookies) -> () in
+   for cookie in cookies {
+        if (cookie.name == "__exponea_etc__") {
+            print(cookie.value);
+        }
+    }
+})
+```
+Afterwards just call identify with the cookie attribute.
