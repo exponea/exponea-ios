@@ -1,6 +1,14 @@
-iOS SDK
-=======
-The Exponea iOS SDK is available at this Git repository: [https://github.com/exponea/exponea-ios](https://github.com/exponea/exponea-ios).
+## NEW iOS SDK - released
+New Exponea iOS SDK is available at this Git repository: [https://github.com/exponea/exponea-ios-sdk](https://github.com/exponea/exponea-ios-sdk).
+We highly recommend to use new iOS SDK, that Exponea actively supports. Exponea no longer supports the [old iOS SDK](https://github.com/exponea/exponea-ios).
+### Features of new SDK
+* Support of all existing features as [old SDK](https://github.com/exponea/exponea-ios)
+* Full support of [Data API](https://developers.exponea.com/v2/reference)
+* Tracking (basic customer tracking, multiple projects tracking, tracking customers with custom IDs)
+* Push-notifications(automatic tracking (delivered, click status) with proper campaign_id)
+* Faster SDK configuration
+* Learn more about features in [documentation](https://github.com/exponea/exponea-ios-sdk/blob/develop/README.md)
+
 
 Installation
 ------------
