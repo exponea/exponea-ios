@@ -490,11 +490,6 @@ static NSMutableDictionary *initCustomer;
                 //NSLog(@"Exponea: an item has been bought: %@", [[transaction payment] productIdentifier]);
                 [products addObject:[[transaction payment] productIdentifier]];
                 self.receipt64 = [[NSData dataWithContentsOfURL:[[NSBundle mainBundle] appStoreReceiptURL]] base64EncodedStringWithOptions:0];
-                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
-                break;
-                
-            case SKPaymentTransactionStateFailed:
-                [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
                 break;
                 
             default:
